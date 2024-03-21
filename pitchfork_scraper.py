@@ -33,11 +33,17 @@ genres = (
     "rap",  # and Hip-Hop
 )  # from pitchfork.com
 
-genre = genres[2]  # jazz
+genre = genres[-1]  # jazz
 has_next_page = True
 page_num = 1
 
 # read df as csv and store as df
+try:
+    with open(f"data/{genre}_pitchfork.csv", "x") as f:
+        f.write(",artist,album_name,rating,album_link,genre")
+
+except FileExistsError:
+    pass
 prev_df = pd.read_csv(f"data/{genre}_pitchfork.csv")
 
 new_df = pd.DataFrame(
