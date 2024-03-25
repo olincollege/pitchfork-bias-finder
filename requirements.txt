@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 spotipy
-=======
 bs4
 requests
 pandas
->>>>>>> 70d0450c92c4902933e0bbcea528350d0d4b18ad
