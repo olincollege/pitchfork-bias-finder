@@ -1,8 +1,8 @@
-import pdb
-import time
 import pandas as pd
 from getData import get_album_tracks_dataframe
 import glob
+import time
+import pdb
 
 
 def get_weighted_mean(album_name, artist_name):
@@ -79,34 +79,30 @@ result_df = pd.concat(filter(None, result_dfs), ignore_index=True)
 
 folder_path = "data/"
 
-result_dfs = pd.DataFrame(
-    columns=[
-        "album_name",
-        "artist_name",
-        "danceability",
-        "energy",
-        "key",
-        "loudness",
-        "mode",
-        "acousticness",
-        "instrumentalness",
-        "liveness",
-        "valence",
-        "tempo",
-        "duration_ms",
-        "time_signature",
-        "genre",
-        "rating",
-    ]
-)  # Initialize an empty list to store the results
-
-album_count = 0
-number = 1
-
 for file_path in glob.glob(folder_path + "*.csv"):
     genre = file_path[5:-14]
 
     df = pd.read_csv(file_path)
+    result_dfs = pd.DataFrame(
+        columns=[
+            "album_name",
+            "artist_name",
+            "danceability",
+            "energy",
+            "key",
+            "loudness",
+            "mode",
+            "acousticness",
+            "instrumentalness",
+            "liveness",
+            "valence",
+            "tempo",
+            "duration_ms",
+            "time_signature",
+            "genre",
+            "rating",
+        ]
+    )  # Initialize an empty list to store the results
 
     for _, row in df.iterrows():
         try:
@@ -117,25 +113,14 @@ for file_path in glob.glob(folder_path + "*.csv"):
                 result_dfs = result_dfs._append(
                     result, ignore_index=True
                 )  # Append the result to the list if recognized by spotify
-                album_count += 1
-
-                # Check if 300 albums have been processed, if yes, output CSV
-                if album_count == 300:
-                    result_dfs.to_csv(f"{genre}_final_{number}.csv")
-                    result_dfs = pd.DataFrame(
-                        columns=result_dfs.columns
-                    )  # Reset DataFrame
-                    album_count = 0  # Reset album count
-                    number += 1
         except TypeError:
             pass
         time.sleep(0.2)
 
     # Process each row of the DataFrame using list comprehension
     # result_dfs = [process_album_data(row) for _, row in df.iterrows()]
-# Output any remaining albums
-if not result_dfs.empty:
     result_dfs.to_csv(f"{genre}_final.csv")
+    breakpoint()
 
     # print(result_dfs)
     # Concatenate the DataFrames in the result list
