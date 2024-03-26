@@ -1,8 +1,7 @@
 import pandas as pd
 from getData import get_album_tracks_dataframe
-
-album_name = "Quantity Is Job 1 EP"
-artist_name = "Five Iron Frenzy"
+import glob
+import time
 
 
 def get_weighted_mean(album_name, artist_name):
@@ -42,11 +41,13 @@ def get_weighted_mean(album_name, artist_name):
 
 
 # get_weighted_mean(album_name, artist_name)
+# album_name = "A Charlie Brown Thanksgiving (50th Anniversary Edition)"
+# artist_name = "Vince Guaraldi"
 
-genre = "electronic"
-weighted_means_df = get_weighted_mean(album_name, artist_name)
-weighted_means_df["genre"] = genre
-print(weighted_means_df)
+# genre = "electronic"
+# weighted_means_df = get_weighted_mean(album_name, artist_name)
+# weighted_means_df["genre"] = genre
+# print(weighted_means_df)
 
 
 def process_album_data(row):
@@ -61,6 +62,7 @@ def process_album_data(row):
         return weighted_means_df
 
 
+"""
 # Read the CSV file into a DataFrame
 df = pd.read_csv("data/electronic_pitchfork.csv")
 
@@ -69,7 +71,36 @@ result_dfs = [process_album_data(row) for _, row in df.iterrows()]
 
 # Concatenate the DataFrames in the result list
 result_df = pd.concat(filter(None, result_dfs), ignore_index=True)
+"""
 
+
+folder_path = "data/"
+
+for file_path in glob.glob(folder_path + "*.csv"):
+    genre = file_path[5:-14]
+
+    df = pd.read_csv(file_path)
+    result_dfs = []  # Initialize an empty list to store the results
+
+    for _, row in df.iterrows():
+        try:
+            result = process_album_data(
+                row
+            )  # Call the function with the current row
+            if result is not None:
+                result_dfs.append(
+                    result
+                )  # Append the result to the list if recognized by spotify
+        except TypeError:
+            pass
+        time.sleep(0.1)
+
+    # Process each row of the DataFrame using list comprehension
+    # result_dfs = [process_album_data(row) for _, row in df.iterrows()]
+
+    # Concatenate the DataFrames in the result list
+    result_df = pd.concat(filter(None, result_dfs), ignore_index=True)
+    result_df.to_csv(f"{genre}_final.csv")
 
 #######################################################################################
 # Calculate mean for every feature
