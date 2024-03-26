@@ -25,12 +25,12 @@ def get_album_id(album_name, artist_name):
             0
         ]  # Assuming the first search result is the album you want
         album_id = album["id"]
-        # print("Album Name:", album_name)
-        # print("Artist Name:", artist_name)
-        # print("Album ID:", album_id)
+        print("Album Name:", album_name)
+        print("Artist Name:", artist_name)
+        print("Album ID:", album_id)
         return album_id
     else:
-        # print("Album not found.")
+        print("Album not found.")
         pass
 
 
