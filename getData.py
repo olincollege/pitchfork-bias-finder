@@ -36,26 +36,6 @@ def get_album_id(album_name, artist_name):
         return None
 
 
-# Function to fetch track features
-def get_track_features(track_id):
-    track_info = sp.audio_features(track_id)[0]
-    time.sleep(1)
-    return {
-        "danceability": track_info["danceability"],
-        "energy": track_info["energy"],
-        "key": track_info["key"],
-        "loudness": track_info["loudness"],
-        "mode": track_info["mode"],
-        "acousticness": track_info["acousticness"],
-        "instrumentalness": track_info["instrumentalness"],
-        "liveness": track_info["liveness"],
-        "valence": track_info["valence"],
-        "tempo": track_info["tempo"],
-        "duration_ms": track_info["duration_ms"],
-        "time_signature": track_info["time_signature"],
-    }
-
-
 def get_album_tracks_dataframe(album_name, artist_name):
     # Get album ID
     album_id = get_album_id(album_name, artist_name)
@@ -63,18 +43,15 @@ def get_album_tracks_dataframe(album_name, artist_name):
         # Get album tracks
         tracks = sp.album_tracks(album_id)["items"]
         time.sleep(1)
-        track_ids = [track["id"] for track in tracks]
 
-        # Fetch track features in batches (max 100 at a time)
-        batch_size = 100
+        # get track features in batch
+        batch_track_ids = [track["id"] for track in tracks]
+        batch_features = sp.audio_features(batch_track_ids)
+
         track_features = []
-        for i in range(0, len(track_ids), batch_size):
-            batch_track_ids = track_ids[i : i + batch_size]
-            batch_features = sp.audio_features(batch_track_ids)
-            for features in batch_features:
-                track_features.append(features)
+        for features in batch_features:
+            track_features.append(features)
 
-        # Combine track information with features
         album_tracks_features = []
         for track, features in zip(tracks, track_features):
             track_info = {
@@ -82,8 +59,19 @@ def get_album_tracks_dataframe(album_name, artist_name):
                 "track": track["name"],
                 "first_artist": track["artists"][0]["name"],
                 "all_artists": [artist["name"] for artist in track["artists"]],
+                "danceability": features["danceability"],
+                "energy": features["energy"],
+                "key": features["key"],
+                "loudness": features["loudness"],
+                "mode": features["mode"],
+                "acousticness": features["acousticness"],
+                "instrumentalness": features["instrumentalness"],
+                "liveness": features["liveness"],
+                "valence": features["valence"],
+                "tempo": features["tempo"],
+                "duration_ms": features["duration_ms"],
+                "time_signature": features["time_signature"],
             }
-            track_info.update(get_track_features(track["id"]))
             album_tracks_features.append(track_info)
 
         # Create DataFrame
@@ -93,7 +81,7 @@ def get_album_tracks_dataframe(album_name, artist_name):
         return None
 
 
-# print(get_album_tracks_dataframe("Voyageur", "Ali Farka Touré"))
+print(get_album_tracks_dataframe("Becoming Undone", "ADULT"))
 
 
 # # Define function to fetch album tracks and their features
