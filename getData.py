@@ -17,6 +17,7 @@ def get_album_id(album_name, artist_name):
     # Search for the album
     query = f"album:{album_name} artist:{artist_name}"
     results = sp.search(q=query, type="album")
+    time.sleep(1)
 
     # Extract album information
     albums = results["albums"]["items"]
@@ -38,6 +39,7 @@ def get_album_id(album_name, artist_name):
 # Function to fetch track features
 def get_track_features(track_id):
     track_info = sp.audio_features(track_id)[0]
+    time.sleep(1)
     return {
         "danceability": track_info["danceability"],
         "energy": track_info["energy"],
@@ -60,6 +62,7 @@ def get_album_tracks_dataframe(album_name, artist_name):
     if album_id:
         # Get album tracks
         tracks = sp.album_tracks(album_id)["items"]
+        time.sleep(1)
         track_ids = [track["id"] for track in tracks]
 
         # Fetch track features in batches (max 100 at a time)
@@ -90,7 +93,7 @@ def get_album_tracks_dataframe(album_name, artist_name):
         return None
 
 
-print(get_album_tracks_dataframe("Voyageur", "Ali Farka Touré"))
+# print(get_album_tracks_dataframe("Voyageur", "Ali Farka Touré"))
 
 
 # # Define function to fetch album tracks and their features
