@@ -17,7 +17,7 @@ def get_album_id(album_name, artist_name):
     # Search for the album
     query = f"album:{album_name} artist:{artist_name}"
     results = sp.search(q=query, type="album")
-    time.sleep(1)
+    time.sleep(0.1)
 
     # Extract album information
     albums = results["albums"]["items"]
@@ -42,7 +42,7 @@ def get_album_tracks_dataframe(album_name, artist_name):
     if album_id:
         # Get album tracks
         tracks = sp.album_tracks(album_id)["items"]
-        time.sleep(1)
+        time.sleep(0.1)
 
         # get track features in batch
         batch_track_ids = [track["id"] for track in tracks]
@@ -81,7 +81,7 @@ def get_album_tracks_dataframe(album_name, artist_name):
         return None
 
 
-print(get_album_tracks_dataframe("Becoming Undone", "ADULT"))
+# print(get_album_tracks_dataframe("Becoming Undone", "ADULT"))
 
 
 # # Define function to fetch album tracks and their features
