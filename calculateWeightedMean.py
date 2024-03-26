@@ -2,6 +2,7 @@ import pandas as pd
 from getData import get_album_tracks_dataframe
 import glob
 import time
+import pdb
 
 
 def get_weighted_mean(album_name, artist_name):
@@ -56,15 +57,17 @@ def process_album_data(row):
         2:-2
     ]  # Removing square brackets from artist name
     genre = row["genre"][2:-2]  # Removing square brackets from genre
+    rating = float(row["rating"][2:-2])
     weighted_means_df = get_weighted_mean(album_name, artist_name)
     if weighted_means_df is not None:
         weighted_means_df["genre"] = genre
+        weighted_means_df["rating"] = rating
         return weighted_means_df
 
 
 """
 # Read the CSV file into a DataFrame
-df = pd.read_csv("data/electronic_pitchfork.csv")
+df = pd.read_csv("data/ele  time.sleep(0.2)ctronic_pitchfork.csv")
 
 # Process each row of the DataFrame using list comprehension
 result_dfs = [process_album_data(row) for _, row in df.iterrows()]
@@ -80,7 +83,26 @@ for file_path in glob.glob(folder_path + "*.csv"):
     genre = file_path[5:-14]
 
     df = pd.read_csv(file_path)
-    result_dfs = []  # Initialize an empty list to store the results
+    result_dfs = pd.DataFrame(
+        columns=[
+            "album_name",
+            "artist_name",
+            "danceability",
+            "energy",
+            "key",
+            "loudness",
+            "mode",
+            "acousticness",
+            "instrumentalness",
+            "liveness",
+            "valence",
+            "tempo",
+            "duration_ms",
+            "time_signature",
+            "genre",
+            "rating",
+        ]
+    )  # Initialize an empty list to store the results
 
     for _, row in df.iterrows():
         try:
@@ -88,19 +110,22 @@ for file_path in glob.glob(folder_path + "*.csv"):
                 row
             )  # Call the function with the current row
             if result is not None:
-                result_dfs.append(
-                    result
+                result_dfs = result_dfs._append(
+                    result, ignore_index=True
                 )  # Append the result to the list if recognized by spotify
         except TypeError:
             pass
-        time.sleep(0.1)
+        time.sleep(0.2)
 
     # Process each row of the DataFrame using list comprehension
     # result_dfs = [process_album_data(row) for _, row in df.iterrows()]
+    result_dfs.to_csv(f"{genre}_final.csv")
+    breakpoint()
 
+    # print(result_dfs)
     # Concatenate the DataFrames in the result list
-    result_df = pd.concat(filter(None, result_dfs), ignore_index=True)
-    result_df.to_csv(f"{genre}_final.csv")
+    # result_df = pd.concat(filter(None, result_dfs), ignore_index=True)
+
 
 #######################################################################################
 # Calculate mean for every feature
