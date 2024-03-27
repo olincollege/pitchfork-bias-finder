@@ -117,24 +117,11 @@ for file_path in glob.glob(folder_path + "*.csv"):
                 result_dfs = result_dfs._append(
                     result, ignore_index=True
                 )  # Append the result to the list if recognized by spotify
-                album_count += 1
-
-                # Check if 300 albums have been processed, if yes, output CSV
-                if album_count == 300:
-                    result_dfs.to_csv(f"{genre}_final_{number}.csv")
-                    result_dfs = pd.DataFrame(
-                        columns=result_dfs.columns
-                    )  # Reset DataFrame
-                    album_count = 0  # Reset album count
-                    number += 1
         except TypeError:
             pass
-        time.sleep(0.2)
 
     # Process each row of the DataFrame using list comprehension
     # result_dfs = [process_album_data(row) for _, row in df.iterrows()]
-# Output any remaining albums
-if not result_dfs.empty:
     result_dfs.to_csv(f"{genre}_final.csv")
 
     # print(result_dfs)
