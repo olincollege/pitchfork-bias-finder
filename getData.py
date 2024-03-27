@@ -7,7 +7,7 @@ import config
 
 # This is the  rate limit per 30 seconds that this code will not exceed when making calls
 # to the spotify API
-RATE_LIMIT = 5
+RATE_LIMIT = 80
 
 CLIENT_ID = config.CLIENT_ID
 CLIENT_SECRET = config.CLIENT_SECRET
@@ -43,7 +43,7 @@ def get_album_id(album_name, artist_name, timestamps):
     try:
         results = sp.search(q=query, type="album")
     except spotipy.exceptions.SpotifyException:
-        time.sleep(0.1)
+        time.sleep(30)
         results = sp.search(q=query, type="album")
 >>>>>>> 3d2ffe2a51c08ac52f5ce069b09c9bb9e6a0dcce
 
@@ -77,7 +77,7 @@ def get_album_tracks_dataframe(album_name, artist_name, timestamps):
         try:
             tracks = sp.album_tracks(album_id)["items"]
         except spotipy.exceptions.SpotifyException:
-            time.sleep(0.1)
+            time.sleep(30)
             tracks = sp.album_tracks(album_id)["items"]
 
         timestamps = check_rate_limit(timestamps)
@@ -88,7 +88,7 @@ def get_album_tracks_dataframe(album_name, artist_name, timestamps):
         try:
             batch_features = sp.audio_features(batch_track_ids)
         except spotipy.exceptions.SpotifyException:
-            time.sleep(0.1)
+            time.sleep(30)
             batch_features = sp.audio_features(batch_track_ids)
         timestamps = check_rate_limit(timestamps)
 
