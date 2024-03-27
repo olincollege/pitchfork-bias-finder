@@ -116,7 +116,7 @@ for file_path in glob.glob(folder_path + "*.csv"):
                 row, timestamps
             )  # Call the function with the current row
             if result is not None:
-                result_dfs = result_dfs._append(
+                result_dfs = result_dfs.append(
                     result, ignore_index=True
                 )  # Append the result to the list if recognized by spotify
         except TypeError:
