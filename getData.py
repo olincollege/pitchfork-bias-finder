@@ -5,6 +5,10 @@ import numpy as np
 from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
 import config
 
+# This is the  rate limit per 30 seconds that this code will not exceed when making calls
+# to the spotify API
+RATE_LIMIT = 5
+
 CLIENT_ID = config.CLIENT_ID
 CLIENT_SECRET = config.CLIENT_SECRET
 client_credentials_manager = SpotifyClientCredentials(
@@ -13,12 +17,37 @@ client_credentials_manager = SpotifyClientCredentials(
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 
-def get_album_id(album_name, artist_name):
+def check_rate_limit(times):
+    time_now = time.time()
+    times.append(time_now)
+    time_thirty_seconds_ago = time_now - 30
+    y = [i for i in times if i >= time_thirty_seconds_ago]
+    # checks if there have been RATE_LIMIT or more calls to api in last thirty seconds.
+    print(f"{len(y)} API calls have been made in the last thirty seconds.")
+
+    if len(y) >= RATE_LIMIT:
+        sleep_time = y[0] - time_thirty_seconds_ago
+        print(f"rate limit hit, sleeping for {sleep_time} seconds.")
+        # wait a little
+        time.sleep(sleep_time)
+    return y
+
+
+def get_album_id(album_name, artist_name, timestamps):
     # Search for the album
     query = f"album:{album_name} artist:{artist_name}"
+<<<<<<< HEAD
     results = sp.search(q=query, type="album")
     time.sleep(0.2)
+=======
+    try:
+        results = sp.search(q=query, type="album")
+    except spotipy.exceptions.SpotifyException:
+        time.sleep(0.1)
+        results = sp.search(q=query, type="album")
+>>>>>>> 3d2ffe2a51c08ac52f5ce069b09c9bb9e6a0dcce
 
+    timestamps = check_rate_limit(timestamps)
     # Extract album information
     albums = results["albums"]["items"]
 
@@ -36,17 +65,32 @@ def get_album_id(album_name, artist_name):
         return None
 
 
-def get_album_tracks_dataframe(album_name, artist_name):
+def get_album_tracks_dataframe(album_name, artist_name, timestamps):
     # Get album ID
-    album_id = get_album_id(album_name, artist_name)
+    album_id = get_album_id(album_name, artist_name, timestamps)
     if album_id:
         # Get album tracks
+<<<<<<< HEAD
         tracks = sp.album_tracks(album_id)["items"]
         time.sleep(0.2)
+=======
+        try:
+            tracks = sp.album_tracks(album_id)["items"]
+        except spotipy.exceptions.SpotifyException:
+            time.sleep(0.1)
+            tracks = sp.album_tracks(album_id)["items"]
+
+        timestamps = check_rate_limit(timestamps)
+>>>>>>> 3d2ffe2a51c08ac52f5ce069b09c9bb9e6a0dcce
 
         # get track features in batch
         batch_track_ids = [track["id"] for track in tracks]
-        batch_features = sp.audio_features(batch_track_ids)
+        try:
+            batch_features = sp.audio_features(batch_track_ids)
+        except spotipy.exceptions.SpotifyException:
+            time.sleep(0.1)
+            batch_features = sp.audio_features(batch_track_ids)
+        timestamps = check_rate_limit(timestamps)
 
         track_features = []
         for features in batch_features:

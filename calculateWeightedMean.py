@@ -4,9 +4,11 @@ import pandas as pd
 from getData import get_album_tracks_dataframe
 import glob
 
+timestamps = []
 
-def get_weighted_mean(album_name, artist_name):
-    df = get_album_tracks_dataframe(album_name, artist_name)
+
+def get_weighted_mean(album_name, artist_name, timestamps):
+    df = get_album_tracks_dataframe(album_name, artist_name, timestamps)
     if df is None:
         return None
 
@@ -51,14 +53,14 @@ def get_weighted_mean(album_name, artist_name):
 # print(weighted_means_df)
 
 
-def process_album_data(row):
+def process_album_data(row, timestamps):
     album_name = row["album_name"][2:-2]
     artist_name = row["artist"][
         2:-2
     ]  # Removing square brackets from artist name
     genre = row["genre"][2:-2]  # Removing square brackets from genre
     rating = float(row["rating"][2:-2])
-    weighted_means_df = get_weighted_mean(album_name, artist_name)
+    weighted_means_df = get_weighted_mean(album_name, artist_name, timestamps)
     if weighted_means_df is not None:
         weighted_means_df["genre"] = genre
         weighted_means_df["rating"] = rating
@@ -111,7 +113,7 @@ for file_path in glob.glob(folder_path + "*.csv"):
     for _, row in df.iterrows():
         try:
             result = process_album_data(
-                row
+                row, timestamps
             )  # Call the function with the current row
             if result is not None:
                 result_dfs = result_dfs._append(
