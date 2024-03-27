@@ -2,3 +2,4 @@ spotipy
 bs4
 requests
 pandas
+pyplot
