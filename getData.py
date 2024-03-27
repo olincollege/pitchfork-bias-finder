@@ -36,11 +36,16 @@ def check_rate_limit(times):
 def get_album_id(album_name, artist_name, timestamps):
     # Search for the album
     query = f"album:{album_name} artist:{artist_name}"
+<<<<<<< HEAD
+    results = sp.search(q=query, type="album")
+    time.sleep(0.2)
+=======
     try:
         results = sp.search(q=query, type="album")
     except spotipy.exceptions.SpotifyException:
         time.sleep(30)
         results = sp.search(q=query, type="album")
+>>>>>>> 3d2ffe2a51c08ac52f5ce069b09c9bb9e6a0dcce
 
     timestamps = check_rate_limit(timestamps)
     # Extract album information
@@ -65,6 +70,10 @@ def get_album_tracks_dataframe(album_name, artist_name, timestamps):
     album_id = get_album_id(album_name, artist_name, timestamps)
     if album_id:
         # Get album tracks
+<<<<<<< HEAD
+        tracks = sp.album_tracks(album_id)["items"]
+        time.sleep(0.2)
+=======
         try:
             tracks = sp.album_tracks(album_id)["items"]
         except spotipy.exceptions.SpotifyException:
@@ -72,6 +81,7 @@ def get_album_tracks_dataframe(album_name, artist_name, timestamps):
             tracks = sp.album_tracks(album_id)["items"]
 
         timestamps = check_rate_limit(timestamps)
+>>>>>>> 3d2ffe2a51c08ac52f5ce069b09c9bb9e6a0dcce
 
         # get track features in batch
         batch_track_ids = [track["id"] for track in tracks]
