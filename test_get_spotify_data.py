@@ -3,6 +3,7 @@ test get_spotify_data
 """
 
 import pytest
+import time
 import pandas as pd
 from get_spotify_data import (
     check_rate_limit,
@@ -18,7 +19,34 @@ def test_check_rate_limit():
     Ensures that the rate limit is properly handled and the list of
     timestamps is updated accordingly.
     """
-    # Test case: ensure rate limit is properly handled
+    # Test case: ensure timestamps more than thirty seconds ago get removed.
+    timestamps = [
+        time.time() - 40,
+        time.time() - 35,
+        time.time() - 20,
+        time.time() - 15,
+        time.time() - 10,
+    ]
+    timestamps_updated = check_rate_limit(timestamps)
+    assert (
+        len(timestamps_updated) == 4
+    )  # Assert that the result array only contains timestamps that occurred
+    # in the last thirty seconds (and the current time).
+
+    # Test case: ensure timestamps array is sorted after adding new entry as a
+    # result of function call.
+    timestamps = [
+        time.time() - 40,
+        time.time() - 30,
+        time.time() - 20,
+        time.time() - 10,
+    ]
+    timestamps_updated = check_rate_limit(timestamps)
+    print(sorted(timestamps_updated))
+    assert (
+        sorted(timestamps_updated) == timestamps_updated
+    )  # Assert that the timestamps list that is returned by check_rate_limit
+    # is sorted.
 
 
 def test_get_album_id():
