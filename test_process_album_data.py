@@ -48,7 +48,7 @@ def test_process_album_data():
     and returns a DataFrame with the weighted means of audio features.
     """
     # Test case: valid album data
-    df = pd.read_csv("data/experimental_pitchfork.csv")
+    df = pd.read_csv("pitchfork_data/experimental_pitchfork.csv")
     row = df.iloc[0]
 
     timestamps = []
