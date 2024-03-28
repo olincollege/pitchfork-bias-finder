@@ -1,10 +1,12 @@
 """
 Helper functions for scraping pitchfork.com's album reviews
 """
+
 import re
 import time
 from bs4 import BeautifulSoup
 import requests
+
 
 def get_pitchfork_rating(album_pitchfork_link):
     """
@@ -16,14 +18,18 @@ def get_pitchfork_rating(album_pitchfork_link):
             pitchfork page
 
     Returns:
-        A string representing the rating pitchfork reviewers gave the album
+        A string representing the rating pitchfork reviewers gave the album.
+        Returns None if the link does not have a rating.
     """
     album_page = requests.get(album_pitchfork_link)
 
     time.sleep(0.5)
     album_soup = BeautifulSoup(album_page.text, "html.parser")
-    rating = album_soup.find(class_=re.compile("Rating")).get_text()
-    return rating
+    try:
+        rating = album_soup.find(class_=re.compile("Rating")).get_text()
+        return rating
+    except AttributeError:
+        return None
 
 
 def find_features_in_review(div, genre, pitchfork_df):
@@ -68,7 +74,9 @@ def find_features_in_review(div, genre, pitchfork_df):
             "genre": [genre],
         }
 
-        pitchfork_df = pitchfork_df._append(next_row, ignore_index=True) # pylint: disable=protected-access
+        pitchfork_df = pitchfork_df._append(
+            next_row, ignore_index=True
+        )  # pylint: disable=protected-access
 
     except AttributeError:
         pass
