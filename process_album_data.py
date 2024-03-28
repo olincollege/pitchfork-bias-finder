@@ -102,30 +102,6 @@ def process_album_data(album_row, times):
 
 FOLDER_PATH = "pitchfork_data/"
 
-result_dfs = pd.DataFrame(
-    columns=[
-        "album_name",
-        "artist_name",
-        "danceability",
-        "energy",
-        "key",
-        "loudness",
-        "mode",
-        "acousticness",
-        "instrumentalness",
-        "liveness",
-        "valence",
-        "tempo",
-        "duration_ms",
-        "time_signature",
-        "genre",
-        "rating",
-    ]
-)  # Initialize an empty list to store the results
-
-ALBUM_COUNT = 0
-NUMBER = 1
-
 
 def main():
     """
@@ -135,8 +111,31 @@ def main():
     function. The processed data is appended to a DataFrame and then
     exported to CSV files based on the genre of the albums.
     """
-
+    album_count = 0
+    number = 1
     timestamps = []
+
+    result_dfs = pd.DataFrame(
+        columns=[
+            "album_name",
+            "artist_name",
+            "danceability",
+            "energy",
+            "key",
+            "loudness",
+            "mode",
+            "acousticness",
+            "instrumentalness",
+            "liveness",
+            "valence",
+            "tempo",
+            "duration_ms",
+            "time_signature",
+            "genre",
+            "rating",
+        ]
+    )  # Initialize an empty list to store the results
+
     for file_path in glob.glob(FOLDER_PATH + "*.csv"):
         genre = file_path[len(FOLDER_PATH) : -14]
 
@@ -152,18 +151,20 @@ def main():
                         result, ignore_index=True
                     )  # Append the result to the list if recognized by spotify
 
-                    ALBUM_COUNT += 1
+                    album_count += 1
 
-                    # Check if 300 albums have been processed, if yes, output CSV
-                    if ALBUM_COUNT == 300:
+                    # Check if 300 albums have been processed,
+                    # if yes, output CSV
+                    if album_count == 300:
                         result_dfs.to_csv(
-                            f"spotify_and_pitchfork_data/{genre}_final_{NUMBER}.csv"
+                            f"spotify_and_pitchfork_data/\
+                                {genre}_final_{number}.csv"
                         )
                         result_dfs = pd.DataFrame(
                             columns=result_dfs.columns
                         )  # Reset DataFrame
-                        ALBUM_COUNT = 0  # Reset album count
-                        NUMBER += 1
+                        album_count = 0  # Reset album count
+                        number += 1
             except TypeError:
                 pass
             time.sleep(0.2)
