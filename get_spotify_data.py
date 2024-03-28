@@ -1,12 +1,30 @@
-import spotipy
+"""
+Module: get_spotify_data.py
+
+This module provides functions to retrieve album information
+and track features from the Spotify API.
+
+Dependencies:
+- spotipy
+- time
+- pandas
+- numpy
+- config (custom module)
+
+Author: Sally Lee
+
+Date: Mar 27, 2024
+
+"""
+
 import time
+import spotipy
 import pandas as pd
-import numpy as np
-from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
+from spotipy.oauth2 import SpotifyClientCredentials
 import config
 
-# This is the  rate limit per 30 seconds that this code will not exceed when making calls
-# to the spotify API
+# This is the  rate limit per 30 seconds that this code will not exceed
+# when making calls to the spotify API
 RATE_LIMIT = 80
 
 CLIENT_ID = config.CLIENT_ID
@@ -18,22 +36,48 @@ sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 
 def check_rate_limit(times):
+    """
+    Checks the rate limit and waits if the number of API calls
+      exceeds the specified limit.
+
+    Args:
+    - times (list): A list containing timestamps of previous API calls.
+
+    Returns:
+    - updated_timestamp (list): Updated list of timestamps after considering
+      the current API call.
+    """
     time_now = time.time()
     times.append(time_now)
     time_thirty_seconds_ago = time_now - 30
-    y = [i for i in times if i >= time_thirty_seconds_ago]
-    # checks if there have been RATE_LIMIT or more calls to api in last thirty seconds.
-    print(f"{len(y)} API calls have been made in the last thirty seconds.")
+    updated_timestamp = [i for i in times if i >= time_thirty_seconds_ago]
+    # checks if there have been RATE_LIMIT or more calls
+    # to api in last thirty seconds.
+    print(
+        f"{len(updated_timestamp)} API calls have been made\
+              in the last thirty seconds."
+    )
 
-    if len(y) >= RATE_LIMIT:
-        sleep_time = y[0] - time_thirty_seconds_ago
+    if len(updated_timestamp) >= RATE_LIMIT:
+        sleep_time = updated_timestamp[0] - time_thirty_seconds_ago
         print(f"rate limit hit, sleeping for {sleep_time} seconds.")
         # wait a little
         time.sleep(sleep_time)
-    return y
+    return updated_timestamp
 
 
 def get_album_id(album_name, artist_name, timestamps):
+    """
+    Retrieve the album ID given the album name and artist name.
+
+    Args:
+    - album_name (str): Name of the album.
+    - artist_name (str): Name of the artist.
+    - timestamps (list): A list containing timestamps of previous API calls.
+
+    Returns:
+    - str: Album ID if found, otherwise None.
+    """
     # Search for the album
     query = f"album:{album_name} artist:{artist_name}"
     try:
@@ -61,6 +105,18 @@ def get_album_id(album_name, artist_name, timestamps):
 
 
 def get_album_tracks_dataframe(album_name, artist_name, timestamps):
+    """
+    Retrieve track features of an album and return them as a DataFrame
+    Args:
+    - album_name (str): Name of the album.
+    - artist_name (str): Name of the artist.
+    - timestamps (list): A list containing timestamps of previous API calls.
+
+    Returns:
+    - pandas.DataFrame: DataFrame containing track features if album is found,
+    otherwise None.
+
+    """
     # Get album ID
     album_id = get_album_id(album_name, artist_name, timestamps)
     if album_id:
@@ -113,48 +169,3 @@ def get_album_tracks_dataframe(album_name, artist_name, timestamps):
         return df
     else:
         return None
-
-
-# print(get_album_tracks_dataframe("Becoming Undone", "ADULT"))
-
-
-# # Define function to fetch album tracks and their features
-# def get_album_tracks_features(album_id):
-#     tracks = sp.album_tracks(album_id)["items"]
-#     track_ids = [track["id"] for track in tracks]
-
-#     # Fetch track features in batches (max 100 at a time)
-#     batch_size = 100
-#     track_features = []
-#     for i in range(0, len(track_ids), batch_size):
-#         batch_track_ids = track_ids[i : i + batch_size]
-#         batch_features = sp.audio_features(batch_track_ids)
-#         for features in batch_features:
-#             track_features.append(features)
-
-#     album_features = []
-#     for track in tracks:
-#         track_info = {
-#             "id": track["id"],
-#             "track": track["name"],
-#             "first_artist": track["artists"][0]["name"],
-#             "all_artists": [artist["name"] for artist in track["artists"]],
-#         }
-#         track_info.update(get_track_features(track["id"]))
-#         # time.sleep(0.1)
-#         album_features.append(track_info)
-#     return album_features
-
-
-# def get_album_tracks_dataframe(album_name, artist_name):
-#     # Get album ID
-#     album_id = get_album_id(album_name, artist_name)
-#     if album_id:
-#         # Get album tracks features
-#         album_tracks_features = get_album_tracks_features(album_id)
-#         # Create DataFrame
-#         df = pd.DataFrame(album_tracks_features)
-#         return df
-#     else:
-#         # print("Album not found.")
-#         return None
