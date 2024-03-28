@@ -125,35 +125,50 @@ result_dfs = pd.DataFrame(
 
 ALBUM_COUNT = 0
 NUMBER = 1
-timestamps = []
-for file_path in glob.glob(FOLDER_PATH + "*.csv"):
-    genre = file_path[5:-14]
 
-    df = pd.read_csv(file_path)
 
-    for _, row in df.iterrows():
-        try:
-            result = process_album_data(
-                row, timestamps
-            )  # Call the function with the current row
-            if result is not None:
-                result_dfs = result_dfs._append(  # pylint: disable=W0212
-                    result, ignore_index=True
-                )  # Append the result to the list if recognized by spotify
+def main():
+    """
+    Process album data from multiple CSV files in the specified folder.
+    This function iterates through each CSV file in the specified folder,
+    reads its data, and processes each row using the process_album_data
+    function. The processed data is appended to a DataFrame and then
+    exported to CSV files based on the genre of the albums.
+    """
 
-                ALBUM_COUNT += 1
+    timestamps = []
+    for file_path in glob.glob(FOLDER_PATH + "*.csv"):
+        genre = file_path[5:-14]
 
-                # Check if 300 albums have been processed, if yes, output CSV
-                if ALBUM_COUNT == 300:
-                    result_dfs.to_csv(f"{genre}_final_{NUMBER}.csv")
-                    result_dfs = pd.DataFrame(
-                        columns=result_dfs.columns
-                    )  # Reset DataFrame
-                    ALBUM_COUNT = 0  # Reset album count
-                    NUMBER += 1
-        except TypeError:
-            pass
-        time.sleep(0.2)
+        df = pd.read_csv(file_path)
 
-    if not result_dfs.empty:
-        result_dfs.to_csv(f"{genre}_final.csv")
+        for _, row in df.iterrows():
+            try:
+                result = process_album_data(
+                    row, timestamps
+                )  # Call the function with the current row
+                if result is not None:
+                    result_dfs = result_dfs._append(  # pylint: disable=W0212
+                        result, ignore_index=True
+                    )  # Append the result to the list if recognized by spotify
+
+                    ALBUM_COUNT += 1
+
+                    # Check if 300 albums have been processed, if yes, output CSV
+                    if ALBUM_COUNT == 300:
+                        result_dfs.to_csv(f"{genre}_final_{NUMBER}.csv")
+                        result_dfs = pd.DataFrame(
+                            columns=result_dfs.columns
+                        )  # Reset DataFrame
+                        ALBUM_COUNT = 0  # Reset album count
+                        NUMBER += 1
+            except TypeError:
+                pass
+            time.sleep(0.2)
+
+        if not result_dfs.empty:
+            result_dfs.to_csv(f"{genre}_final.csv")
+
+
+if __name__ == "__main__":
+    main()
