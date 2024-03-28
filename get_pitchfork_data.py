@@ -33,13 +33,13 @@ def main():
         # read df as csv and store as df
         try:
             with open(
-                f"data/{genre}_pitchfork.csv", "x", encoding="utf-8"
+                f"pitchfork_data/{genre}_pitchfork.csv", "x", encoding="utf-8"
             ) as file:
                 file.write(",artist,album_name,rating,album_link,genre")
 
         except FileExistsError:
             pass
-        data_df = pd.read_csv(f"data/{genre}_pitchfork.csv")
+        data_df = pd.read_csv(f"pitchfork_data/{genre}_pitchfork.csv")
 
         while has_next_page:
             url = (
@@ -59,7 +59,7 @@ def main():
 
             page_num += 1
 
-        data_df.to_csv(f"data/{genre}_pitchfork.csv")
+        data_df.to_csv(f"pitchfork_data/{genre}_pitchfork.csv")
 
 
 if __name__ == "__main__":

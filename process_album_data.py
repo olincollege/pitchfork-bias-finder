@@ -100,7 +100,7 @@ def process_album_data(album_row, times):
         return weighted_means_df
 
 
-FOLDER_PATH = "data/"
+FOLDER_PATH = "pitchfork_data/"
 
 result_dfs = pd.DataFrame(
     columns=[
@@ -138,7 +138,7 @@ def main():
 
     timestamps = []
     for file_path in glob.glob(FOLDER_PATH + "*.csv"):
-        genre = file_path[5:-14]
+        genre = file_path[len(FOLDER_PATH) : -14]
 
         df = pd.read_csv(file_path)
 
@@ -156,7 +156,9 @@ def main():
 
                     # Check if 300 albums have been processed, if yes, output CSV
                     if ALBUM_COUNT == 300:
-                        result_dfs.to_csv(f"{genre}_final_{NUMBER}.csv")
+                        result_dfs.to_csv(
+                            f"spotify_and_pitchfork_data/{genre}_final_{NUMBER}.csv"
+                        )
                         result_dfs = pd.DataFrame(
                             columns=result_dfs.columns
                         )  # Reset DataFrame
@@ -167,7 +169,7 @@ def main():
             time.sleep(0.2)
 
         if not result_dfs.empty:
-            result_dfs.to_csv(f"{genre}_final.csv")
+            result_dfs.to_csv(f"spotify_and_pitchfork_data/{genre}_final.csv")
 
 
 if __name__ == "__main__":
