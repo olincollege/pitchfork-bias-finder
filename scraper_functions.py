@@ -74,9 +74,9 @@ def find_features_in_review(div, genre, pitchfork_df):
             "genre": [genre],
         }
 
-        pitchfork_df = pitchfork_df._append(
+        pitchfork_df = pitchfork_df._append(  # pylint: disable=protected-access
             next_row, ignore_index=True
-        )  # pylint: disable=protected-access
+        )
 
     except AttributeError:
         pass

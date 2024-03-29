@@ -2,7 +2,7 @@
 Test scraper functions to find and scrape data from pitchfork.com
 """
 
-import pytest
+import pytest  # pylint: disable=unused-import
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup

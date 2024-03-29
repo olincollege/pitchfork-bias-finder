@@ -1,9 +1,9 @@
 """
-test get_spotify_data
+Pytest for get_spotify_data.py
 """
 
-import pytest
 import time
+import pytest
 import pandas as pd
 from get_spotify_data import (
     check_rate_limit,
@@ -78,17 +78,21 @@ def test_get_album_tracks_dataframe():
     """
     # Test case: DataFrame returned when album ID is valid
     timestamps = []
-    df = get_album_tracks_dataframe(
+    album_tracks_df = get_album_tracks_dataframe(
         "Electricity", "Ibibio Sound Machine", timestamps
     )
-    assert isinstance(df, pd.DataFrame)  # Ensure DataFrame is returned
+    assert isinstance(
+        album_tracks_df, pd.DataFrame
+    )  # Ensure DataFrame is returned
 
     # Test case: album not found
     timestamps = []
-    df = get_album_tracks_dataframe(
+    album_tracks_df = get_album_tracks_dataframe(
         "asdfasdfwer", "w9ehasdfadsfu3jsd", timestamps
     )
-    assert df is None  # Ensure None is returned when album is not found
+    assert (
+        album_tracks_df is None
+    )  # Ensure None is returned when album is not found
 
 
 if __name__ == "__main__":
