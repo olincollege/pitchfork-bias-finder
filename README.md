@@ -3,6 +3,8 @@
 ## Overview
 The Bias in Album Ratings project aims to investigate potential biases in album ratings by analyzing the influence of music features. By exploring the relationship between music characteristics and subjective evaluations, this project seeks to uncover underlying biases within the rating process and examine their implications for the perception of musical quality.
 
+The computational essay is in the `pitchfork_bias_finder.ipynb` file
+
 ## Key Objectives
 - Identify potential biases in album ratings based on music features.
 - Explore the relationship between music characteristics and subjective evaluations.
@@ -54,6 +56,8 @@ The Bias in Album Ratings project aims to investigate potential biases in album 
     `pitchfork_bias_finder.ipynb`
    
 ## Contributing
+
+The project was conducted by Sally Lee, Eddy Pan, and Vishnu Eskew.
 
 Contributions to this project are welcome! If you have ideas for improvements or new features, feel free to submit a pull request.
 
