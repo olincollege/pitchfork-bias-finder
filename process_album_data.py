@@ -48,12 +48,12 @@ def get_weighted_mean(album_name, artist_name, times):
     total_duration = album_track_features["duration_ms"].sum()
 
     for column in album_track_features.columns:
-        if (
-            column != "id"
-            and column != "track"
-            and column != "album"
-            and column != "first_artist"
-            and column != "all_artists"
+        if column not in (
+            "id",
+            "track",
+            "album",
+            "first_artist",
+            "all_artists",
         ):
             weighted_sum = (
                 album_track_features[column]
@@ -82,8 +82,9 @@ def process_album_data(album_row, times):
     - times (list): A list containing timestamps of previous API calls.
 
     Returns:
-    - pandas.DataFrame: DataFrame containing the processed album data
-      with weighted means of audio features.
+    - pandas.DataFrame: DataFrame containing the processed album data with
+        weighted means of audio features. Returns None if invalid information
+        in the provided album_row.
     """
     album_name = album_row["album_name"][2:-2]
     artist_name = album_row["artist"][
@@ -95,9 +96,12 @@ def process_album_data(album_row, times):
     rating = float(album_row["rating"][2:-2])
     weighted_means_df = get_weighted_mean(album_name, artist_name, times)
     if weighted_means_df is not None:
-        weighted_means_df["genre"] = album_genre
-        weighted_means_df["rating"] = rating
+        weighted_means_df = weighted_means_df.assign(genre=album_genre)
+        weighted_means_df = weighted_means_df.assign(rating=rating)
+
         return weighted_means_df
+
+    return None  # weighted_means_df is empty
 
 
 FOLDER_PATH = "pitchfork_data/"
@@ -139,9 +143,9 @@ def main():
     for file_path in glob.glob(FOLDER_PATH + "*.csv"):
         genre = file_path[len(FOLDER_PATH) : -14]
 
-        df = pd.read_csv(file_path)
+        pitchfork_df = pd.read_csv(file_path)
 
-        for _, row in df.iterrows():
+        for _, row in pitchfork_df.iterrows():
             try:
                 result = process_album_data(
                     row, timestamps

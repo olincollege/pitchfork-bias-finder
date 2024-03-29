@@ -12,6 +12,7 @@ Dependencies:
 - config (custom module)
 
 Author: Sally Lee
+Editor: Eddy Pan
 
 Date: Mar 27, 2024
 
@@ -99,9 +100,9 @@ def get_album_id(album_name, artist_name, timestamps):
         print("Artist Name:", artist_name)
         print("Album ID:", album_id)
         return album_id
-    else:
-        print("Album not found.")
-        return None
+
+    print("Album not found.")
+    return None
 
 
 def get_album_tracks_dataframe(album_name, artist_name, timestamps):
@@ -165,7 +166,7 @@ def get_album_tracks_dataframe(album_name, artist_name, timestamps):
             album_tracks_features.append(track_info)
 
         # Create DataFrame
-        df = pd.DataFrame(album_tracks_features)
-        return df
-    else:
-        return None
+        album_features_df = pd.DataFrame(album_tracks_features)
+        return album_features_df
+
+    return None
