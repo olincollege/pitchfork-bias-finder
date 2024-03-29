@@ -31,7 +31,17 @@ The Bias in Album Ratings project aims to investigate potential biases in album 
     ```
     pip install -r requirements.txt
     ```
-4. Run the project:
+4. Create a file `config.py` in the root of the repository
+
+    The `config.py` file must define these two variables:
+    ```
+    CLIENT_ID = "your client id"
+    CLIENT_SECRET = "your client secret"
+    ```
+    With these variables, your API key is set up to access the Spotify API's
+    diverse toolset that we implemented for this project.
+
+5. Run the project:
    - to get pitchfork data: 
         ```
         python3 get_pitchfork_data.py

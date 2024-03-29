@@ -21,7 +21,7 @@ def get_pitchfork_rating(album_pitchfork_link):
         A string representing the rating pitchfork reviewers gave the album.
         Returns None if the link does not have a rating.
     """
-    album_page = requests.get(album_pitchfork_link)
+    album_page = requests.get(album_pitchfork_link, timeout=10)
 
     time.sleep(0.5)
     album_soup = BeautifulSoup(album_page.text, "html.parser")
